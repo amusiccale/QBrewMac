@@ -6,6 +6,7 @@
 TARGET = qbrew
 TEMPLATE = app
 CONFIG += qt warn_on
+QT += core gui widgets printsupport
 
 MOC_DIR = build
 OBJECTS_DIR = build
@@ -36,13 +37,9 @@ win32 {
 }
 
 macx {
-    CONFIG += x86 ppc
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
-    QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.4u.sdk
-
     DEFINES += HAVE_ROUND
-    LIBS += -dead-strip
-    QMAKE_POST_LINK=strip qbrew.app/Contents/MacOS/qbrew
+    QMAKE_LFLAGS += -Wl,-dead_strip
+    QMAKE_POST_LINK = strip qbrew.app/Contents/MacOS/qbrew
 
     # install into app bundle
     trans.path = qbrew.app/Contents/Resources/translations
