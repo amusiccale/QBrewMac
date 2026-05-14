@@ -7,6 +7,7 @@
   Please see the header file for copyright and license information
  ***************************************************************************/
 
+#include <QObject>
 #include <QStringList>
 #include "resource.h"
 #include "hop.h"

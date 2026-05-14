@@ -44,7 +44,8 @@ View::View(QWidget *parent, Recipe *recipe)
     bold.setBold(true);
     QFontMetrics fm(font());
     unsigned mh = (unsigned)(fm.lineSpacing() * 1.5);
-    unsigned mw = fm.width('M');
+    unsigned mw = fm.horizontalAdvance('M');
+
 
     // additional setup
     ui.ogreclabel->setFont(bold);
@@ -72,7 +73,7 @@ View::View(QWidget *parent, Recipe *recipe)
 
     grainpage.view->verticalHeader()->setDefaultSectionSize(mh);
     grainpage.view->verticalHeader()->hide();
-    grainpage.view->horizontalHeader()->setClickable(true);
+    grainpage.view->horizontalHeader()->setSectionsClickable(true);
     grainpage.view->horizontalHeader()->setHighlightSections(false);
 
     grainpage.view->setColumnWidth(GrainModel::NAME, 20*mw);
@@ -94,7 +95,7 @@ View::View(QWidget *parent, Recipe *recipe)
 
     hoppage.view->verticalHeader()->setDefaultSectionSize(mh);
     hoppage.view->verticalHeader()->hide();
-    hoppage.view->horizontalHeader()->setClickable(true);
+    hoppage.view->horizontalHeader()->setSectionsClickable(true);
     hoppage.view->horizontalHeader()->setHighlightSections(false);
 
     hoppage.view->setColumnWidth(HopModel::NAME, 20*mw);
@@ -115,7 +116,7 @@ View::View(QWidget *parent, Recipe *recipe)
 
     miscpage.view->verticalHeader()->setDefaultSectionSize(mh);
     miscpage.view->verticalHeader()->hide();
-    miscpage.view->horizontalHeader()->setClickable(true);
+    miscpage.view->horizontalHeader()->setSectionsClickable(true);
     miscpage.view->horizontalHeader()->setHighlightSections(false);
 
     miscpage.view->setColumnWidth(MiscModel::NAME, 20*mw);

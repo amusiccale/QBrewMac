@@ -7,7 +7,28 @@
   Please see the header file for copyright and license information.
 ***************************************************************************/
 
-#include <QtGui>
+#include <QApplication>
+#include <QFile>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QDir>
+#include <QIcon>
+#include <QMessageBox>
+#include <QSplashScreen>
+#include <QStyleFactory>
+#include <QTimer>
+#include <QSettings>
+#include <QCloseEvent>
+#include <QMutex>
+#include <QMutexLocker>
+///#include <QRegExp>
+#include <QMainWindow>
+#include <QAction>
+#include <QMenu>
+#include <QToolBar>
+#include <QStatusBar>
+#include <QWhatsThis>
+#include <QFileOpenEvent>
 
 #include "alcoholtool.h"
 #include "configure.h"
@@ -59,7 +80,7 @@ void QBrew::initialize(const QString &filename)
         QSplashScreen *splash = new QSplashScreen(dataBase() + tr("splash.png"),
 						 Qt::WindowStaysOnTopHint);
         splash->show();
-        QApplication::flush();
+        QApplication::processEvents();
         QTimer::singleShot(3000, splash, SLOT(close()));
     }
 

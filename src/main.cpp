@@ -47,7 +47,7 @@ extern void qt_mac_set_menubar_icons(bool enable);
 #include "qbrew.h"
 #include "resource.h"
 
-using namespace std;
+// using namespace std;
 using namespace Resource;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ void doversion(QTextStream &stream)
     stream << QObject::tr(COPYRIGHT);
     stream << ' ' << AUTHOR;
     stream << " <" << AUTHOR_EMAIL << ">";
-    stream << endl;
+    stream << Qt::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ void dohelp(QTextStream &stream)
     stream << QObject::tr("Options\n");
     stream << QObject::tr("    --help                Print the command line options.\n");
     stream << QObject::tr("    --version             Print the application version.\n");
-    stream << endl;
+    stream << Qt::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
         app.installTranslator(&translator);
     }
     // load qt translations
-    QString qttransdir = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+    QString qttransdir = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
     QTranslator qttranslator;
     if (qttranslator.load("qt_" + QLocale::system().name(), qttransdir)) {
         app.installTranslator(&qttranslator);

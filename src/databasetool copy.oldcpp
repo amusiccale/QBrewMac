@@ -27,8 +27,13 @@
 #include "databasetool.h"
 
 //////////////////////////////////////////////////////////////////////////////
-// Construction, Destruction
+// Construction, Destruction                                                //
 //////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// DatabaseTool()
+// --------------
+// Constructor
 
 DatabaseTool::DatabaseTool(QWidget* parent)
     : QMainWindow(parent), grainmodel_(0), hopmodel_(0), miscmodel_(0),
@@ -38,14 +43,16 @@ DatabaseTool::DatabaseTool(QWidget* parent)
     statusBar()->hide();
     ui.actionsave->setEnabled(false);
 
+    // setup actions
     connect(ui.actionsave, SIGNAL(triggered()), this, SLOT(fileSave()));
     connect(ui.actionquit, SIGNAL(triggered()), this, SLOT(close()));
 
+    // get current font information, for sizing
     QFontMetrics fm(font());
     unsigned mh = (unsigned)(fm.lineSpacing() * 1.5);
-    unsigned mw = fm.horizontalAdvance('M');   // ✅ FIXED
+    unsigned mw = fm.width('M');
 
-    // Grain page
+    // grain page
     QWidget *widget = new QWidget();
     grainpage.setupUi(widget);
     ui.ingredients->addTab(widget, tr("&Grains"));
@@ -58,7 +65,7 @@ DatabaseTool::DatabaseTool(QWidget* parent)
 
     grainpage.view->verticalHeader()->setDefaultSectionSize(mh);
     grainpage.view->verticalHeader()->hide();
-    grainpage.view->horizontalHeader()->setSectionsClickable(true);  // ✅ FIXED
+    grainpage.view->horizontalHeader()->setClickable(true);
     grainpage.view->horizontalHeader()->setHighlightSections(false);
 
     grainpage.view->setColumnWidth(GrainModel::NAME, 20*mw);
@@ -68,7 +75,7 @@ DatabaseTool::DatabaseTool(QWidget* parent)
     grainpage.view->setColumnWidth(GrainModel::TYPE, 8*mw);
     grainpage.view->setColumnWidth(GrainModel::USE, 8*mw);
 
-    // Hop page
+    // hop page
     widget = new QWidget();
     hoppage.setupUi(widget);
     ui.ingredients->addTab(widget, tr("&Hops"));
@@ -81,7 +88,7 @@ DatabaseTool::DatabaseTool(QWidget* parent)
 
     hoppage.view->verticalHeader()->setDefaultSectionSize(mh);
     hoppage.view->verticalHeader()->hide();
-    hoppage.view->horizontalHeader()->setSectionsClickable(true);  // ✅ FIXED
+    hoppage.view->horizontalHeader()->setClickable(true);
     hoppage.view->horizontalHeader()->setHighlightSections(false);
 
     hoppage.view->setColumnHidden(HopModel::WEIGHT, true);
@@ -90,7 +97,7 @@ DatabaseTool::DatabaseTool(QWidget* parent)
     hoppage.view->setColumnWidth(HopModel::NAME, 20*mw);
     hoppage.view->setColumnWidth(HopModel::ALPHA, 8*mw);
 
-    // Misc page
+    // misc page
     widget = new QWidget();
     miscpage.setupUi(widget);
     ui.ingredients->addTab(widget, tr("&Miscellaneous"));
@@ -103,7 +110,7 @@ DatabaseTool::DatabaseTool(QWidget* parent)
 
     miscpage.view->verticalHeader()->setDefaultSectionSize(mh);
     miscpage.view->verticalHeader()->hide();
-    miscpage.view->horizontalHeader()->setSectionsClickable(true);  // ✅ FIXED
+    miscpage.view->horizontalHeader()->setClickable(true);
     miscpage.view->horizontalHeader()->setHighlightSections(false);
 
     miscpage.view->setColumnHidden(MiscModel::QUANTITY, true);
@@ -111,7 +118,7 @@ DatabaseTool::DatabaseTool(QWidget* parent)
     miscpage.view->setColumnWidth(MiscModel::TYPE, 8*mw);
     miscpage.view->horizontalHeader()->setStretchLastSection(true);
 
-    // Style page
+    // style page
     widget = new QWidget();
     stylepage.setupUi(widget);
     ui.ingredients->addTab(widget, tr("&Styles"));
@@ -124,7 +131,7 @@ DatabaseTool::DatabaseTool(QWidget* parent)
 
     stylepage.view->verticalHeader()->setDefaultSectionSize(mh);
     stylepage.view->verticalHeader()->hide();
-    stylepage.view->horizontalHeader()->setSectionsClickable(true);  // ✅ FIXED
+    stylepage.view->horizontalHeader()->setClickable(true);
     stylepage.view->horizontalHeader()->setHighlightSections(false);
 
     stylepage.view->setColumnWidth(StyleModel::NAME, 20*mw);
@@ -137,22 +144,34 @@ DatabaseTool::DatabaseTool(QWidget* parent)
     stylepage.view->setColumnWidth(StyleModel::SRMLOW, 8*mw);
     stylepage.view->setColumnWidth(StyleModel::SRMHI, 8*mw);
 
-    // Connections (unchanged)
-    connect(grainmodel_, SIGNAL(modified()), this, SLOT(dataModified()));
-    connect(grainpage.addbutton, SIGNAL(clicked()), grainpage.view, SLOT(addIngredient()));
-    connect(grainpage.removebutton, SIGNAL(clicked()), grainpage.view, SLOT(removeIngredient()));
+    // setup connections
+    connect(grainmodel_, SIGNAL(modified()),
+            this, SLOT(dataModified()));
+    connect(grainpage.addbutton, SIGNAL(clicked()),
+            grainpage.view, SLOT(addIngredient()));
+    connect(grainpage.removebutton, SIGNAL(clicked()),
+            grainpage.view, SLOT(removeIngredient()));
 
-    connect(hopmodel_, SIGNAL(modified()), this, SLOT(dataModified()));
-    connect(hoppage.addbutton, SIGNAL(clicked()), hoppage.view, SLOT(addIngredient()));
-    connect(hoppage.removebutton, SIGNAL(clicked()), hoppage.view, SLOT(removeIngredient()));
+    connect(hopmodel_, SIGNAL(modified()),
+            this, SLOT(dataModified()));
+    connect(hoppage.addbutton, SIGNAL(clicked()),
+            hoppage.view, SLOT(addIngredient()));
+    connect(hoppage.removebutton, SIGNAL(clicked()),
+            hoppage.view, SLOT(removeIngredient()));
 
-    connect(miscmodel_, SIGNAL(modified()), this, SLOT(dataModified()));
-    connect(miscpage.addbutton, SIGNAL(clicked()), miscpage.view, SLOT(addIngredient()));
-    connect(miscpage.removebutton, SIGNAL(clicked()), miscpage.view, SLOT(removeIngredient()));
+    connect(miscmodel_, SIGNAL(modified()),
+            this, SLOT(dataModified()));
+    connect(miscpage.addbutton, SIGNAL(clicked()),
+            miscpage.view, SLOT(addIngredient()));
+    connect(miscpage.removebutton, SIGNAL(clicked()),
+            miscpage.view, SLOT(removeIngredient()));
 
-    connect(stylemodel_, SIGNAL(modified()), this, SLOT(dataModified()));
-    connect(stylepage.addbutton, SIGNAL(clicked()), stylepage.view, SLOT(addIngredient()));
-    connect(stylepage.removebutton, SIGNAL(clicked()), stylepage.view, SLOT(removeIngredient()));
+    connect(stylemodel_, SIGNAL(modified()),
+            this, SLOT(dataModified()));
+    connect(stylepage.addbutton, SIGNAL(clicked()),
+            stylepage.view, SLOT(addIngredient()));
+    connect(stylepage.removebutton, SIGNAL(clicked()),
+            stylepage.view, SLOT(removeIngredient()));
 
     grainmodel_->flush();
     hopmodel_->flush();
@@ -164,31 +183,41 @@ DatabaseTool::~DatabaseTool() {}
 
 void DatabaseTool::fileSave()
 {
+    // TODO: use QDesktopServices in next non-bugfix release (0.5.0)
     QString localbase = QDIR_HOME + "/." + Resource::DATA_FILE;
 
     QFileInfo finfo(localbase);
     if (finfo.exists() && !finfo.isWritable()) {
+        // no write permission
         QMessageBox::warning(this, Resource::TITLE,
-            tr("<p>Unable to save the database.You do not have permission "
-               "to write to %1").arg(localbase));
+                             tr("<p>Unable to save the database."
+                                "You do not have permission "
+                                "to write to %1").arg(localbase));
     } else {
+        // sync with Data...
         Data::instance()->clearGrains();
-        foreach(Grain grain, grains_) { Data::instance()->insertGrain(grain); }
-
+        foreach(Grain grain, grains_) {
+            Data::instance()->insertGrain(grain);
+        }
         Data::instance()->clearHops();
-        foreach(Hop hop, hops_) { Data::instance()->insertHop(hop); }
-
+        foreach(Hop hop, hops_) {
+            Data::instance()->insertHop(hop);
+        }
         Data::instance()->clearMiscs();
-        foreach(Misc misc, miscs_) { Data::instance()->insertMisc(misc); }
-
+        foreach(Misc misc, miscs_) {
+            Data::instance()->insertMisc(misc);
+        }
         Data::instance()->clearStyles();
-        foreach(Style style, styles_) { Data::instance()->insertStyle(style); }
-
-        if (!Data::instance()->saveData(localbase)) {
-            QMessageBox::warning(this, Resource::TITLE,
-                tr("<p>Unable to save the database.Error in saving %1").arg(localbase));
+        foreach(Style style, styles_) {
+            Data::instance()->insertStyle(style);
         }
 
+        if (!Data::instance()->saveData(localbase)) {
+            // error in saving file
+            QMessageBox::warning(this, Resource::TITLE,
+                                 tr("<p>Unable to save the database."
+                                    "Error in saving %1").arg(localbase));
+        }
         ui.actionsave->setEnabled(false);
         modified_ = false;
     }

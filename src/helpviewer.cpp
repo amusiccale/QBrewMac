@@ -13,6 +13,8 @@
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QTextBrowser>
+#include <QPageLayout>
+#include <QPageSize>
 
 #include "resource.h"
 #include "helpviewer.h"
@@ -98,20 +100,25 @@ void HelpViewer::textChanged()
 void HelpViewer::print()
 {
     // Note: we are not sharing printer with application
-    if (!printer_) {
-        printer_ = new QPrinter(QPrinter::HighResolution);
-        printer_->setFullPage(true);
-        // for convenience, default to US_Letter for US/Canada
-        switch (QLocale::system().country()) {
-          case QLocale::AnyCountry:
-          case QLocale::Canada:
-          case QLocale::UnitedStates:
-          case QLocale::UnitedStatesMinorOutlyingIslands:
-              printer_->setPageSize(QPrinter::Letter); break;
-          default:
-              printer_->setPageSize(QPrinter::A4); break;
-        }
+if (!printer_) {
+    printer_ = new QPrinter(QPrinter::HighResolution);
+    printer_->setFullPage(true);
+
+    QPageLayout layout = printer_->pageLayout();
+
+    // for convenience, default to US_Letter for US/Canada
+    switch (QLocale::system().territory()) {   // ✅ modern replacement
+      case QLocale::Canada:
+      case QLocale::UnitedStates:
+          layout.setPageSize(QPageSize(QPageSize::Letter));
+          break;
+      default:
+          layout.setPageSize(QPageSize(QPageSize::A4));
+          break;
     }
+
+    printer_->setPageLayout(layout);
+}
 
     QPrintDialog *pdialog = new QPrintDialog(printer_, this);
     if (pdialog->exec() == QDialog::Accepted) {
